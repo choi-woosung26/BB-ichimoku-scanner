@@ -1,6 +1,3 @@
-import streamlit as st
-import streamlit.components.v1
-from tradingview_screener import Query, col
 import pandas as pd
 import numpy as np
 import yfinance as yf
@@ -20,7 +17,7 @@ h3 { font-size: 18px !important; }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("한국 주식 종목 검색기 - 일목균형 · 볼린저 스캐너")
+st.title("한국 주식 종목 검색기 - 장기역배열 · 일목균형/볼린저 돌파 스캐너")
 
 # ── 상수 ─────────────────────────────────────────────────────────
 VALID_SMA_KEYS = {'sma_mid', 'sma_long'}
@@ -350,11 +347,11 @@ if bb_en:
     elif bb_dir == 'inside':
         st.sidebar.caption("  ↳ 조건: 하단밴드 ≤ 종가 ≤ 상단밴드")
 
-    st.sidebar.caption("**스퀴즈 조건 (AND)**")
+    st.sidebar.caption("**밴드수축 횡보검색 (AND)**")
     sq1, sq2 = st.sidebar.columns(2)
     with sq1:
         if st.button(
-            f"{'✅' if bb_sq else '⬜'} 스퀴즈 적용",
+            f"{'✅' if bb_sq else '⬜'} 밴드수축 적용",
             key="btn_bb_sq", use_container_width=True,
             help="상단·하단밴드가 중심선과 편차 N% 이내로 N일 이상 지속"
         ):
@@ -409,7 +406,7 @@ if st.session_state.bb_enabled:
         d = st.session_state.bb_upper_dir
         bb_summary.append({'above':'상단<종가','inside':'밴드내','below':'종가<상단'}[d])
     if st.session_state.bb_squeeze_enabled:
-        bb_summary.append(f"스퀴즈{st.session_state.bb_squeeze_days}일/{st.session_state.bb_squeeze_pct:.0f}%")
+        bb_summary.append(f"밴드수축{st.session_state.bb_squeeze_days}일/{st.session_state.bb_squeeze_pct:.0f}%")
 st.sidebar.caption("볼린저: " + (" · ".join(bb_summary) if bb_summary else "없음"))
 
 
@@ -440,7 +437,7 @@ if st.session_state.bb_enabled:
         d = st.session_state.bb_upper_dir
         bb_lines.append({'above':'상단밴드 < 종가','inside':'하단밴드 ≤ 종가 ≤ 상단밴드','below':'종가 < 상단밴드'}[d])
     if st.session_state.bb_squeeze_enabled:
-        bb_lines.append(f"스퀴즈: 편차 {st.session_state.bb_squeeze_pct:.0f}% 이내 {st.session_state.bb_squeeze_days}일 이상 (AND)")
+        bb_lines.append(f"밴드수축 횡보검색: 편차 {st.session_state.bb_squeeze_pct:.0f}% 이내 {st.session_state.bb_squeeze_days}일 이상 (AND)")
 
 st.markdown(f"""
 **검색 조건 (일봉 기준)**
@@ -1156,5 +1153,4 @@ if st.button("🔍 종목 검색 시작", use_container_width=True):
                 for i, row in enumerate(results):
                     with cols_ui[i % 5]:
                         st.link_button(f"📈 {row['종목명']}", get_chart_url(row['name_raw']), use_container_width=True)
-
 
