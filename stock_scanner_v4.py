@@ -11,7 +11,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ── 페이지 설정 & 전역 CSS ───────────────────────────────────────
-st.set_page_config(page_title="주식 스캐너 v2", page_icon="📊", layout="wide")
+st.set_page_config(page_title="주식 스캐너 v4", page_icon="📊", layout="wide")
 
 st.markdown("""
 <style>
@@ -20,7 +20,7 @@ h3 { font-size: 18px !important; }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("📊 한국 주식 종목 검색기 — 장기역배열 · 일목균형 · 볼린저 스캐너")
+st.title("한국 주식 종목 검색기 — 장기역배열 · 일목균형 · 볼린저 스캐너")
 
 # ── 상수 ─────────────────────────────────────────────────────────
 VALID_SMA_KEYS = {'sma_mid', 'sma_long'}
@@ -327,7 +327,7 @@ if bb_en:
         st.session_state.bb_params['std'] = sv
 
     st.sidebar.caption("**상단밴드 조건**")
-    bb1, bb2, bb3 = st.sidebar.columns(3)
+    bb1, bb2 = st.sidebar.columns(2)
     with bb1:
         active = bb_dir == 'above'
         if st.button(f"{'🟢' if active else '⬜'} 상단<종가", key="btn_bb_above", use_container_width=True, help="종가 > 상단밴드 (상단 돌파)"):
@@ -338,18 +338,11 @@ if bb_en:
         if st.button(f"{'🟡' if active else '⬜'} 밴드내", key="btn_bb_inside", use_container_width=True, help="하단밴드 ≤ 종가 ≤ 상단밴드"):
             st.session_state.bb_upper_dir = None if active else 'inside'
             st.rerun()
-    with bb3:
-        active = bb_dir == 'below'
-        if st.button(f"{'🔴' if active else '⬜'} 종가<상단", key="btn_bb_below", use_container_width=True, help="종가 < 상단밴드"):
-            st.session_state.bb_upper_dir = None if active else 'below'
-            st.rerun()
 
     if bb_dir == 'above':
         st.sidebar.caption("  ↳ 조건: 상단밴드 < 종가")
     elif bb_dir == 'inside':
         st.sidebar.caption("  ↳ 조건: 하단밴드 ≤ 종가 ≤ 상단밴드")
-    elif bb_dir == 'below':
-        st.sidebar.caption("  ↳ 조건: 종가 < 상단밴드")
 
     st.sidebar.caption("**스퀴즈 조건 (AND)**")
     sq1, sq2 = st.sidebar.columns(2)
@@ -925,8 +918,6 @@ def check_all_conditions(code_6, ma_order, ma_params, close_dir,
                     return False, curr_close, ma_vals, extra_vals
                 elif bb_upper_dir == 'inside' and not (lower_val <= curr_close <= upper_val):
                     return False, curr_close, ma_vals, extra_vals
-                elif bb_upper_dir == 'below' and not (curr_close < upper_val):
-                    return False, curr_close, ma_vals, extra_vals
 
                 if bb_squeeze_enabled:
                     sq = check_bb_squeeze(upper_bb, lower_bb, sma_bb, bb_squeeze_pct, bb_squeeze_days)
@@ -1159,3 +1150,4 @@ if st.button("🔍 종목 검색 시작", use_container_width=True):
                 for i, row in enumerate(results):
                     with cols_ui[i % 5]:
                         st.link_button(f"📈 {row['종목명']}", get_chart_url(row['name_raw']), use_container_width=True)
+
