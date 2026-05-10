@@ -1,3 +1,6 @@
+import streamlit as st
+import streamlit.components.v1
+from tradingview_screener import Query, col
 import pandas as pd
 import numpy as np
 import yfinance as yf
@@ -1153,4 +1156,5 @@ if st.button("🔍 종목 검색 시작", use_container_width=True):
                 for i, row in enumerate(results):
                     with cols_ui[i % 5]:
                         st.link_button(f"📈 {row['종목명']}", get_chart_url(row['name_raw']), use_container_width=True)
+
 
