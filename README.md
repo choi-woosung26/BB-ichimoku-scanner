@@ -1,0 +1,1 @@
+# BB-ichimoku-scanner
