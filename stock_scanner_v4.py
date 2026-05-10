@@ -11,7 +11,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ── 페이지 설정 & 전역 CSS ───────────────────────────────────────
-st.set_page_config(page_title="주식 스캐너 v4", page_icon="📊", layout="wide")
+st.set_page_config(page_title="주식 스캐너 v2", page_icon="📊", layout="wide")
 
 st.markdown("""
 <style>
@@ -20,7 +20,7 @@ h3 { font-size: 18px !important; }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("한국 주식 종목 검색기 — 장기역배열 · 일목균형 · 볼린저 스캐너")
+st.title("📊 한국 주식 종목 검색기 — SMA · 일목균형표 · 볼린저밴드 스캐너")
 
 # ── 상수 ─────────────────────────────────────────────────────────
 VALID_SMA_KEYS = {'sma_mid', 'sma_long'}
@@ -264,7 +264,13 @@ with sc1:
         f"{'✅' if span_en else '⬜'} 선행스팬 적용",
         key="btn_span_en", use_container_width=True
     ):
-        st.session_state.ichi_span_enabled = not span_en
+        new_span_en = not span_en
+        st.session_state.ichi_span_enabled = new_span_en
+        if new_span_en:
+            # 선행스팬 활성화 시 당일 돌파 + 볼린저밴드 상단<종가 자동 적용
+            st.session_state.ichi_span_candle = '0봉전(현재)'
+            st.session_state.bb_enabled = True
+            st.session_state.bb_upper_dir = 'above'
         st.rerun()
 
 if span_en:
@@ -1150,4 +1156,5 @@ if st.button("🔍 종목 검색 시작", use_container_width=True):
                 for i, row in enumerate(results):
                     with cols_ui[i % 5]:
                         st.link_button(f"📈 {row['종목명']}", get_chart_url(row['name_raw']), use_container_width=True)
+
 
