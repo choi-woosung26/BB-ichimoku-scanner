@@ -20,7 +20,7 @@ h3 { font-size: 18px !important; }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("📊 한국 주식 종목 검색기 — SMA · 일목균형표 · 볼린저밴드 스캐너")
+st.title("📊 한국 주식 종목 검색기 — 장기역배열 · 일목균형 · 볼린저 스캐너")
 
 # ── 상수 ─────────────────────────────────────────────────────────
 VALID_SMA_KEYS = {'sma_mid', 'sma_long'}
